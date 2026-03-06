@@ -108,6 +108,18 @@ npm install
 npm run build
 ```
 
+Atau satu perintah otomatis build + zip:
+
+```bash
+npm run build:deploy
+```
+
+File hasil zip:
+
+```text
+deploy-public_html.zip
+```
+
 Lalu upload:
 
 ```text

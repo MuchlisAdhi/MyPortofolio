@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "zip:out": "powershell -NoProfile -Command \"if (!(Test-Path 'out')) { throw 'Folder out tidak ditemukan. Jalankan npm run build terlebih dahulu.' }; if (Test-Path 'deploy-public_html.zip') { Remove-Item 'deploy-public_html.zip' -Force }; Compress-Archive -Path 'out\\\\*' -DestinationPath 'deploy-public_html.zip' -Force\"",
+    "build:deploy": "npm run build && npm run zip:out"
   },
   "dependencies": {
     "next": "16.1.6",
