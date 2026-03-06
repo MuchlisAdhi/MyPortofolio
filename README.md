@@ -93,8 +93,33 @@ http://localhost:3000
 
 ```bash
 npm run build
-npm run start
 ```
+
+Setelah build sukses, output static ada di folder `out/`.
+
+## Deploy Hemat Storage (Anymhost 2GB)
+
+Untuk paket storage kecil, **jangan upload seluruh project**. Upload **isi folder `out/` saja** ke `public_html` hosting.
+
+Langkah ringkas:
+
+```bash
+npm install
+npm run build
+```
+
+Lalu upload:
+
+```text
+out/*
+```
+
+Tidak perlu upload:
+
+- `node_modules/`
+- `.next/`
+- `src/`
+- file development lainnya
 
 ## Verifikasi PWA
 

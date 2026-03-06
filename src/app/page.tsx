@@ -6,8 +6,6 @@ import { StatsRow } from "@/components/stats-row";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getStats, profile, projects, skillGroups, socialLinks } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
-
 export default function Home() {
   const stats = getStats(new Date().getFullYear());
   const currentYear = new Date().getFullYear();
