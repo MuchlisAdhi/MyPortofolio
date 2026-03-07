@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: "Muchlis Adhi Wiratama Portfolio",
     images: [
       {
-        url: "/projects/hris-portal-main.png",
+        url: "/og/og-image-dark-muchlisadhi.png",
         width: 1200,
         height: 630,
         alt: "Muchlis Adhi Wiratama Portfolio",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "Muchlis Adhi Wiratama | Portfolio",
     description:
       "Portfolio landing page of Muchlis Adhi Wiratama, Web Developer / Fullstack Developer.",
-    images: ["/projects/hris-portal-main.png"],
+    images: ["/og/og-image-dark-muchlisadhi.png"],
   },
   manifest: "/manifest.webmanifest",
   icons: {
