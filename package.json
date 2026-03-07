@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "zip:out": "powershell -NoProfile -Command \"if (!(Test-Path 'out')) { throw 'Folder out tidak ditemukan. Jalankan npm run build terlebih dahulu.' }; if (Test-Path 'deploy-public_html.zip') { Remove-Item 'deploy-public_html.zip' -Force }; Compress-Archive -Path 'out\\\\*' -DestinationPath 'deploy-public_html.zip' -Force\"",
+    "zip:out": "powershell -NoProfile -Command \"if (!(Test-Path 'out')) { throw 'Folder out tidak ditemukan. Jalankan npm run build terlebih dahulu.' }; if (Test-Path 'deploy-public_html.zip') { Remove-Item 'deploy-public_html.zip' -Force }; tar -a -c -f deploy-public_html.zip -C out .\"",
     "build:deploy": "npm run build && npm run zip:out"
   },
   "dependencies": {
