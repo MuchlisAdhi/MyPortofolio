@@ -22,6 +22,33 @@ export const metadata: Metadata = {
   title: "Muchlis Adhi Wiratama | Portfolio",
   description:
     "Portfolio landing page of Muchlis Adhi Wiratama, Web Developer / Fullstack Developer.",
+  metadataBase: new URL("https://muchlisadhi.my.id"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://muchlisadhi.my.id/",
+    title: "Muchlis Adhi Wiratama | Portfolio",
+    description:
+      "Portfolio landing page of Muchlis Adhi Wiratama, Web Developer / Fullstack Developer.",
+    siteName: "Muchlis Adhi Wiratama Portfolio",
+    images: [
+      {
+        url: "/projects/hris-portal-main.png",
+        width: 1200,
+        height: 630,
+        alt: "Muchlis Adhi Wiratama Portfolio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Muchlis Adhi Wiratama | Portfolio",
+    description:
+      "Portfolio landing page of Muchlis Adhi Wiratama, Web Developer / Fullstack Developer.",
+    images: ["/projects/hris-portal-main.png"],
+  },
   manifest: "/manifest.webmanifest",
   icons: {
     shortcut: "/favicon.svg",
