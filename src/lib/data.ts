@@ -131,7 +131,7 @@ export const projects: Project[] = [
     year: 2024,
     role: "Fullstack",
     image: "/projects/hris-portal-main.png",
-    link: "https://www.portal.sidoagunggroup.com",
+    link: "https://portal.sidoagunggroup.com/Authorization/Login",
   },
   {
     title: "Katalog Produk PT SidoAgung Farm",
