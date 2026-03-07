@@ -162,3 +162,8 @@ Tidak perlu upload:
 - Error `icon-192x192.png 404`:
   - file fallback sudah disediakan di `public/icon-192x192.png`
   - jika masih muncul, lakukan hard refresh dan clear site data/service worker browser
+- Deploy cPanel static tetapi file `/_next/*` 404:
+  - tidak perlu setup Node.js App jika deploy dari folder `out` (static export)
+  - pastikan upload hasil zip terbaru dan extract langsung ke `public_html`
+  - pastikan file `.htaccess` ikut terupload di `public_html`
+  - hard refresh browser (`Ctrl+F5`), lalu unregister service worker dan clear site data
