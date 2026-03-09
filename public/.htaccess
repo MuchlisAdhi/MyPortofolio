@@ -9,6 +9,10 @@ DirectoryIndex index.html
   RewriteEngine On
   RewriteBase /
 
+  # Redirect www host to the canonical non-www host.
+  RewriteCond %{HTTP_HOST} ^www\.muchlisadhi\.my\.id$ [NC]
+  RewriteRule ^(.*)$ https://muchlisadhi.my.id/$1 [R=301,L]
+
   # Serve file/folder as-is when it exists.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
