@@ -27,7 +27,8 @@ DirectoryIndex index.html
   RewriteEngine On
   RewriteBase /
 
-  # Redirect www host to the canonical non-www host.
+  # Canonicalize protocol and host: force HTTPS + non-www.
+  RewriteCond %{HTTPS} !=on [OR]
   RewriteCond %{HTTP_HOST} ^www\.muchlisadhi\.my\.id$ [NC]
   RewriteRule ^(.*)$ https://muchlisadhi.my.id/$1 [R=301,L]
 
