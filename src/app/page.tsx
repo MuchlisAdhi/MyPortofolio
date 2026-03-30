@@ -17,7 +17,7 @@ export default function Home() {
           <ThemeToggle />
         </div>
 
-        <section className="mx-auto mt-2 w-full max-w-[560px]">
+        <header className="mx-auto mt-2 w-full max-w-[560px]">
           <div className="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:justify-center">
             <div className="relative h-[104px] w-[104px] overflow-hidden rounded-full border-[3px] border-[#f3c845]">
               <Image
@@ -35,19 +35,27 @@ export default function Home() {
                 {profile.name}
               </h1>
               <p className="text-lg text-[#525252] dark:text-slate-300">{profile.role}</p>
-              <p className="text-[15px] text-[#666666] dark:text-slate-400">{profile.location}</p>
-              <div className="pt-2">
+              <address className="not-italic text-[15px] text-[#666666] dark:text-slate-400">
+                {profile.location}
+              </address>
+              <nav aria-label="Social media links" className="pt-2">
                 <SocialLinks links={socialLinks} />
-              </div>
+              </nav>
             </div>
           </div>
+        </header>
+
+        <section aria-labelledby="stats-heading" className="mx-auto mt-10 max-w-[540px]">
+          <h2 id="stats-heading" className="sr-only">
+            Statistik pengalaman
+          </h2>
+          <StatsRow items={stats} />
         </section>
 
-        <div className="mx-auto mt-10 max-w-[540px]">
-          <StatsRow items={stats} />
-        </div>
-
-        <section className="mx-auto mt-9 grid w-full max-w-[430px] grid-cols-2 gap-3">
+        <nav
+          aria-label="Primary profile actions"
+          className="mx-auto mt-9 grid w-full max-w-[430px] grid-cols-2 gap-3"
+        >
           <a
             href="/cv.pdf"
             download
@@ -61,17 +69,21 @@ export default function Home() {
           >
             Contact me
           </a>
+        </nav>
+
+        <section aria-labelledby="portfolio-heading" className="mx-auto mt-11 max-w-[660px]">
+          <h2 id="portfolio-heading" className="sr-only">
+            Portfolio dan skill
+          </h2>
+          <PortfolioTabs projects={projects} skillGroups={skillGroups} />
         </section>
 
-        <div className="mx-auto mt-11 max-w-[660px]">
-          <PortfolioTabs projects={projects} skillGroups={skillGroups} />
-        </div>
-
         <section
+          aria-labelledby="contact-heading"
           id="contact"
           className="mx-auto mt-12 max-w-[560px] rounded-2xl bg-[#e7e7e7] p-6 dark:bg-[#202633]"
         >
-          <h2 className="font-display text-2xl font-semibold text-[#383838] dark:text-white">
+          <h2 id="contact-heading" className="font-display text-2xl font-semibold text-[#383838] dark:text-white">
             Let&apos;s build something useful together
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#565656] dark:text-slate-300">
@@ -85,7 +97,9 @@ export default function Home() {
 
         <footer className="mt-10 flex flex-col items-center justify-between gap-4 text-sm text-[#686868] sm:flex-row dark:text-slate-400">
           <p>&copy; {currentYear} Muchlis Adhi Wiratama.</p>
-          <SocialLinks links={socialLinks} compact variant="chip" />
+          <nav aria-label="Footer social links">
+            <SocialLinks links={socialLinks} compact variant="chip" />
+          </nav>
         </footer>
       </main>
     </div>

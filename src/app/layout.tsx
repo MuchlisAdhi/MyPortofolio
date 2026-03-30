@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ServiceWorkerRegister } from "@/components/sw-register";
+import { SITE_URL } from "@/lib/site";
 
 const jakartaSans = Poppins({
   variable: "--font-jakarta",
@@ -22,13 +23,13 @@ export const metadata: Metadata = {
   title: "Muchlis Adhi Wiratama | Portfolio",
   description:
     "Portfolio landing page of Muchlis Adhi Wiratama, Web Developer / Fullstack Developer.",
-  metadataBase: new URL("https://muchlisadhi.my.id"),
+  metadataBase: new URL(SITE_URL),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
-    url: "https://muchlisadhi.my.id/",
+    url: `${SITE_URL}/`,
     title: "Muchlis Adhi Wiratama | Portfolio",
     description:
       "Portfolio landing page of Muchlis Adhi Wiratama, Web Developer / Fullstack Developer.",

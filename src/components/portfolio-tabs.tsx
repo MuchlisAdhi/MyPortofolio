@@ -163,12 +163,19 @@ export function PortfolioTabs({ projects, skillGroups }: PortfolioTabsProps) {
       </div>
 
       {activeTab === "portfolio" ? (
-        <div role="tabpanel" id="panel-portfolio" aria-labelledby="tab-portfolio" className="space-y-5">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <section
+          role="tabpanel"
+          id="panel-portfolio"
+          aria-labelledby="tab-portfolio"
+          className="space-y-5"
+        >
+          <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {visibleProjects.map((project) => (
-              <ProjectCard key={project.title} project={project} />
+              <li key={project.title}>
+                <ProjectCard project={project} />
+              </li>
             ))}
-          </div>
+          </ul>
 
           {hasMoreProjects ? (
             <div className="flex justify-center">
@@ -183,9 +190,9 @@ export function PortfolioTabs({ projects, skillGroups }: PortfolioTabsProps) {
               </button>
             </div>
           ) : null}
-        </div>
+        </section>
       ) : (
-        <div
+        <section
           role="tabpanel"
           id="panel-skills"
           aria-labelledby="tab-skills"
@@ -206,7 +213,7 @@ export function PortfolioTabs({ projects, skillGroups }: PortfolioTabsProps) {
               </ul>
             </article>
           ))}
-        </div>
+        </section>
       )}
     </section>
   );
