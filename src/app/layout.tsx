@@ -1,22 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ServiceWorkerRegister } from "@/components/sw-register";
 import { SITE_URL } from "@/lib/site";
 
-const jakartaSans = Poppins({
+const appFont = Poppins({
   variable: "--font-jakarta",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-const spaceGrotesk = Poppins({
-  variable: "--font-space",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["500", "600", "700"],
+  preload: true,
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -75,13 +67,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const setInitialThemeScript = `
+    (function() {
+      try {
+        var storedTheme = localStorage.getItem('theme');
+        if (storedTheme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (error) {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  `;
+
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`${jakartaSans.variable} ${spaceGrotesk.variable} antialiased`}>
-        <ThemeProvider>
-          {children}
-          <ServiceWorkerRegister />
-        </ThemeProvider>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: setInitialThemeScript }} />
+      </head>
+      <body className={`${appFont.variable} antialiased`}>
+        {children}
       </body>
     </html>
   );

@@ -6,7 +6,14 @@ const config = {
   outDir: "out",
   generateRobotsTxt: false,
   generateIndexSitemap: false,
-  exclude: ["/404", "/500", "/robots.txt", "/manifest.webmanifest"],
+  exclude: [
+    "/404",
+    "/500",
+    "/robots.txt",
+    "/manifest.webmanifest",
+    "/blog/opengraph-image",
+    "/blog/*/opengraph-image",
+  ],
   transform: async (ctx, path) => {
     return {
       loc: path,
@@ -19,9 +26,9 @@ const config = {
   additionalPaths: async () => {
     return [
       {
-        loc: "/cv.pdf",
-        changefreq: "monthly",
-        priority: 0.5,
+        loc: "/blog",
+        changefreq: "weekly",
+        priority: 0.8,
         lastmod: new Date().toISOString(),
       },
     ];

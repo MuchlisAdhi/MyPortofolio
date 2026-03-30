@@ -1,10 +1,22 @@
 import Image from "next/image";
+import Link from "next/link";
+import dynamic from "next/dynamic";
 import { EmailButton } from "@/components/email-button";
-import { PortfolioTabs } from "@/components/portfolio-tabs";
 import { SocialLinks } from "@/components/social-links";
 import { StatsRow } from "@/components/stats-row";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getStats, profile, projects, skillGroups, socialLinks } from "@/lib/data";
+
+const PortfolioTabs = dynamic(
+  () => import("@/components/portfolio-tabs").then((module) => module.PortfolioTabs),
+  {
+    loading: () => (
+      <div className="rounded-2xl bg-[#ececec] p-5 text-sm text-[#5a5a5a] dark:bg-[#1f2430] dark:text-slate-300">
+        Loading portfolio...
+      </div>
+    ),
+  },
+);
 
 export default function Home() {
   const stats = getStats(new Date().getFullYear());
@@ -54,7 +66,7 @@ export default function Home() {
 
         <nav
           aria-label="Primary profile actions"
-          className="mx-auto mt-9 grid w-full max-w-[430px] grid-cols-2 gap-3"
+          className="mx-auto mt-9 grid w-full max-w-[520px] grid-cols-3 gap-3"
         >
           <a
             href="/cv.pdf"
@@ -69,6 +81,13 @@ export default function Home() {
           >
             Contact me
           </a>
+          <Link
+            href="/blog"
+            prefetch={false}
+            className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#1d4f91] px-3 text-[15px] font-semibold text-white transition hover:bg-[#173f73] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 sm:h-12 sm:px-6 sm:text-[18px] dark:bg-sky-500 dark:text-[#1a1f29] dark:hover:bg-sky-400"
+          >
+            Blog
+          </Link>
         </nav>
 
         <section aria-labelledby="portfolio-heading" className="mx-auto mt-11 max-w-[660px]">

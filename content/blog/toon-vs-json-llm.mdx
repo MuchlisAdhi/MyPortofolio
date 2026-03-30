@@ -1,0 +1,550 @@
+---
+title: "TOON vs JSON untuk LLM: Mana yang Lebih Efisien dan Cara Pakainya di Laravel atau Next.js?"
+description: "Panduan santai mengenal TOON vs JSON untuk LLM, kapan lebih hemat token, kapan JSON tetap unggul, plus contoh implementasi di Laravel dan Next.js."
+publishedAt: "2026-03-30"
+updatedAt: "2026-03-30"
+author: "Muchlis Adhi Wiratama"
+slug: "toon-vs-json-untuk-llm"
+canonical: "https://muchlisadhi.my.id/articles/toon-vs-json-untuk-llm"
+excerpt: "TOON menarik karena bisa membuat context LLM lebih ringkas, tapi bukan berarti otomatis selalu lebih baik dari JSON. Saya lebih suka melihatnya sebagai format input yang efisien, sementara JSON tetap jadi andalan untuk output yang harus rapi, tervalidasi, dan aman dipakai di pipeline aplikasi."
+tags:
+  - LLM
+  - AI Engineering
+  - TOON
+  - JSON
+  - Laravel
+  - Next.js
+keywords:
+  - TOON vs JSON
+  - Token-Oriented Object Notation
+  - format data untuk LLM
+  - TOON Laravel
+  - TOON Next.js
+  - structured output JSON
+  - optimasi token LLM
+seo:
+  title: "TOON vs JSON untuk LLM: Mana yang Lebih Efisien dan Cara Pakainya di Laravel atau Next.js?"
+  description: "Panduan santai mengenal TOON vs JSON untuk LLM, kapan lebih hemat token, kapan JSON tetap unggul, plus contoh implementasi di Laravel dan Next.js."
+  robots: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+  openGraph:
+    type: "article"
+    locale: "id_ID"
+    url: "https://muchlisadhi.my.id/articles/toon-vs-json-untuk-llm"
+    siteName: "Muchlis Adhi Wiratama"
+  twitter:
+    card: "summary_large_image"
+---
+
+export const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'TOON vs JSON untuk LLM: Mana yang Lebih Efisien dan Cara Pakainya di Laravel atau Next.js?',
+  description:
+    'Panduan santai mengenal TOON vs JSON untuk LLM, kapan lebih hemat token, kapan JSON tetap unggul, plus contoh implementasi di Laravel dan Next.js.',
+  author: {
+    '@type': 'Person',
+    name: 'Muchlis Adhi Wiratama',
+    url: 'https://muchlisadhi.my.id/',
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Muchlis Adhi Wiratama',
+    url: 'https://muchlisadhi.my.id/',
+  },
+  mainEntityOfPage: 'https://muchlisadhi.my.id/articles/toon-vs-json-untuk-llm',
+  datePublished: '2026-03-30',
+  dateModified: '2026-03-30',
+  inLanguage: 'id-ID',
+  articleSection: ['AI Engineering', 'LLM', 'Web Development'],
+  keywords: [
+    'TOON vs JSON',
+    'Token-Oriented Object Notation',
+    'format data untuk LLM',
+    'Laravel',
+    'Next.js',
+    'structured outputs',
+  ],
+}
+
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+/>
+
+# TOON vs JSON untuk LLM: Mana yang Lebih Efisien dan Cara Pakainya di Laravel atau Next.js?
+
+Belakangan ini saya makin sering ketemu pertanyaan yang kelihatannya sederhana, tapi ternyata jawabannya lumayan seru: kalau kita sedang bangun aplikasi berbasis LLM, format data yang paling enak dipakai itu tetap JSON, atau sudah waktunya melirik TOON?
+
+Jujur, awalnya saya juga mengira TOON cuma “JSON yang dibikin lebih ringkas”. Setelah saya dalami, ternyata posisinya lebih menarik dari itu. TOON bukan pengganti total untuk JSON. Saya justru melihatnya sebagai format yang **sangat menarik untuk input/context LLM**, sementara JSON masih jadi pilihan paling aman untuk **output terstruktur, integrasi tool, dan kontrak API**.
+
+Di artikel ini saya mau bahas dengan gaya yang santai tapi tetap teknis: apa itu TOON, bedanya dengan JSON, kapan TOON lebih efisien untuk LLM, dan bagaimana cara mengonfigurasikannya di Laravel atau Next.js.
+
+## Apa itu TOON?
+
+TOON adalah singkatan dari **Token-Oriented Object Notation**. Dokumentasi resminya mendeskripsikan TOON sebagai representasi yang ringkas, human-readable, dan lossless dari model data JSON, yang memang ditujukan untuk input LLM. TOON menggabungkan gaya indentasi ala YAML dengan format tabel ala CSV untuk array of objects yang seragam. Dokumentasi resminya bahkan menyarankan cara berpikir yang simpel: **pakai JSON secara programatis, lalu encode menjadi TOON ketika data mau dikirim ke LLM**. [1][2]
+
+Dengan kata lain, TOON bukan ingin menggantikan JSON di semua layer aplikasi. Dia lebih cocok dijadikan **translation layer** supaya context ke model jadi lebih hemat token.
+
+## Contoh sederhana: JSON vs TOON
+
+Biar kebayang, misalnya kita punya data user seperti ini.
+
+```json
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "role": "admin",
+      "lastLogin": "2026-03-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "role": "user",
+      "lastLogin": "2026-03-01T11:30:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Charlie",
+      "role": "user",
+      "lastLogin": "2026-03-01T12:10:00Z"
+    }
+  ]
+}
+```
+
+Kalau di-encode ke TOON, bentuknya bisa jadi seperti ini:
+
+```toon
+users[3]{id,name,role,lastLogin}:
+  1,Alice,admin,2026-03-01T10:00:00Z
+  2,Bob,user,2026-03-01T11:30:00Z
+  3,Charlie,user,2026-03-01T12:10:00Z
+```
+
+Hal yang langsung terasa:
+
+- nama field tidak diulang terus-menerus di setiap row,
+- bracket, quote, dan karakter struktural lain jauh lebih sedikit,
+- array length (`[3]`) dan daftar field (`{id,name,role,lastLogin}`) membuat struktur tetap eksplisit.
+
+Buat LLM, pola seperti ini sering lebih “ringkas tapi masih jelas”.
+
+## TOON vs JSON: bedanya di mana?
+
+Kalau saya ringkas, perbandingannya kurang lebih begini:
+
+| Aspek | TOON | JSON |
+| --- | --- | --- |
+| Fokus utama | Efisiensi token untuk context/prompt LLM | Interoperabilitas universal aplikasi dan API |
+| Kelebihan besar | Hemat token, enak untuk array of objects yang seragam | Mature, universal, tooling melimpah |
+| Kekurangan besar | Tidak semua pipeline/tooling native mendukung | Verbose, terutama untuk data tabel yang field-nya berulang |
+| Cocok untuk | Prompt context, knowledge pack, data retrieval, tabular records | API responses, function calling, structured outputs, kontrak antar layanan |
+| Output yang wajib tervalidasi | Bisa, tapi perlu decoder/validator tambahan | Jauh lebih aman karena JSON Schema dan dukungan provider sudah matang |
+
+Jadi, TOON dan JSON itu bukan musuh bebuyutan. Lebih tepat dibilang: **mereka unggul di layer yang berbeda**.
+
+## Mana yang lebih efisien untuk model LLM?
+
+Nah, ini bagian yang paling sering bikin salah paham.
+
+### Jawaban singkatnya: tergantung bentuk datanya
+
+Kalau datanya berupa **uniform arrays of objects** — misalnya daftar produk, order list, event logs, analytics rows, katalog, atau hasil query tabel — TOON sangat menarik. Dokumentasi resmi TOON menyebut format ini memang punya sweet spot di sana, karena field cukup dideklarasikan sekali lalu nilainya tinggal mengalir per baris. [1]
+
+Benchmark resmi TOON juga menunjukkan hasil yang cukup menarik untuk **input retrieval/comprehension**: TOON mencatat **76.4% accuracy** dengan **2,759 token**, sementara JSON biasa ada di **75.0% accuracy** dengan **4,587 token**. Artinya, pada benchmark tersebut TOON sedikit lebih baik secara akurasi sekaligus memakai **39.9% token lebih sedikit** daripada JSON terformat. [3]
+
+Tapi di sinilah nuance yang menurut saya paling penting.
+
+### TOON tidak selalu lebih kecil dari JSON compact
+
+Dokumentasi TOON sendiri cukup fair soal ini. Mereka menjelaskan bahwa untuk struktur yang **deeply nested** atau **tidak seragam**, **JSON compact** sering kali justru lebih kecil. Di benchmark mixed-structure resmi mereka, total token TOON adalah **227,830**, sedangkan **JSON compact** ada di **198,546**. Jadi secara total, pada kumpulan data campuran itu TOON justru **14.7% lebih besar** daripada JSON compact. [1][3]
+
+Dengan kata lain, kalau yang Anda bandingkan adalah:
+
+- **TOON vs JSON pretty-printed** → TOON sering menang cukup jauh,
+- **TOON vs JSON compact/minified** → hasilnya lebih kontekstual; TOON bisa kalah di data yang nested atau semi-uniform.
+
+### Untuk output terstruktur, JSON masih lebih aman
+
+Kalau kebutuhan Anda adalah **output model yang harus langsung dibaca sistem**, misalnya untuk tool call, schema validation, atau response yang akan masuk ke pipeline backend, JSON masih lebih aman jadi pilihan default.
+
+Di OpenAI API, Structured Outputs dengan `json_schema` direkomendasikan dibanding JSON mode lama, dan dokumentasinya menegaskan bahwa Structured Outputs memastikan output mengikuti schema yang diberikan. Google Gemini juga menyediakan structured outputs berbasis JSON Schema untuk hasil yang predictable dan type-safe. [7][8][9]
+
+Bahkan ada preprint akademik awal tahun 2026 yang menguji TOON sebagai **target output format**. Hasilnya menarik: format yang sudah mapan seperti JSON, XML, dan YAML masih cenderung **lebih andal dari sisi validitas struktur**, sementara TOON unggul di efisiensi dan jejak komputasi. Studi itu juga menunjukkan model yang lebih besar bisa memperkecil gap validitas TOON, tapi trade-off-nya tentu biaya komputasi ikut naik. [10]
+
+## Rule of thumb yang saya pakai
+
+Kalau saya harus kasih aturan praktis yang gampang diingat, saya akan pakai ini:
+
+### Pakai TOON ketika:
+
+- Anda sedang mengirim **context besar** ke LLM,
+- datanya dominan berupa **array of objects yang seragam**,
+- Anda ingin menghemat token dan memperbesar kapasitas context window,
+- Anda tetap menyimpan source of truth dalam JSON/array/object biasa di aplikasi.
+
+### Tetap pakai JSON ketika:
+
+- output model harus **langsung dikonsumsi sistem**,
+- Anda butuh **schema validation** yang kuat,
+- Anda memakai **function calling** atau structured outputs provider,
+- datanya sangat nested, irregular, atau pipeline internal Anda sudah sepenuhnya dibangun di atas JSON.
+
+### Pola hybrid yang paling realistis
+
+Menurut saya, pola terbaik saat ini adalah:
+
+1. **Simpan dan olah data tetap dalam JSON/object biasa** di aplikasi.
+2. **Encode ke TOON hanya saat akan dikirim ke LLM**.
+3. **Minta model mengembalikan JSON** jika output perlu diproses program secara ketat.
+
+Ini memberi dua keuntungan sekaligus: input lebih hemat token, output tetap stabil dan gampang divalidasi.
+
+## Cara konfigurasi dan kustomisasi TOON di Laravel
+
+Untuk ekosistem Laravel, TOON docs menampilkan **community implementation** untuk Laravel, salah satunya `mischasigtermans/laravel-toon`. Package ini menyediakan facade, helper, collection macro, dan konfigurasi yang cukup nyaman untuk dipakai di project Laravel. [5][6]
+
+### 1) Instalasi package
+
+```bash
+composer require mischasigtermans/laravel-toon
+```
+
+### 2) Pemakaian dasar
+
+```php
+<?php
+
+use MischaSigtermans\Toon\Facades\Toon;
+
+$data = [
+    'products' => [
+        ['id' => 1, 'name' => 'Keyboard', 'price' => 350000, 'stock' => 12],
+        ['id' => 2, 'name' => 'Mouse', 'price' => 180000, 'stock' => 4],
+        ['id' => 3, 'name' => 'Monitor', 'price' => 2200000, 'stock' => 2],
+    ],
+];
+
+$toon = Toon::encode($data);
+$decoded = Toon::decode($toon);
+```
+
+Output TOON-nya kira-kira seperti ini:
+
+```toon
+products[3]{id,name,price,stock}:
+  1,Keyboard,350000,12
+  2,Mouse,180000,4
+  3,Monitor,2200000,2
+```
+
+### 3) Publish file konfigurasi
+
+```bash
+php artisan vendor:publish --tag=toon-config
+```
+
+### 4) Opsi konfigurasi yang paling berguna
+
+Package Laravel tersebut menyediakan beberapa opsi yang menurut saya paling relevan untuk workflow LLM:
+
+```php
+<?php
+
+// config/toon.php
+return [
+    // Array kecil tetap ditulis normal, array besar dijadikan tabel
+    'min_rows_for_table' => 2,
+
+    // ',', "\t", atau '|'
+    'delimiter' => "\t",
+
+    // Validasi ketat saat decode
+    'strict' => true,
+
+    // Hemat token dengan menghilangkan nilai yang tidak terlalu penting
+    'omit' => ['null', 'empty'],
+
+    // Hilangkan field yang tidak relevan untuk prompt
+    'omit_keys' => ['created_at', 'updated_at', 'deleted_at'],
+
+    // Pendekkan key yang terlalu panjang
+    'key_aliases' => [
+        'description' => 'desc',
+        'organization_id' => 'org_id',
+        'customer_name' => 'cust_name',
+    ],
+
+    // Ringkas nilai
+    'date_format' => 'Y-m-d',
+    'truncate_strings' => 120,
+    'number_precision' => 2,
+];
+```
+
+Secara praktis, konfigurasi di atas berguna untuk tiga hal:
+
+- **mengurangi token yang tidak penting**,
+- **membuat prompt lebih fokus**,
+- **menjaga hasil encode tetap konsisten**.
+
+### 5) Contoh workflow Laravel + LLM
+
+Contoh yang saya suka adalah: query data dari database, encode ke TOON, kirim ke model sebagai context, lalu minta hasil akhir kembali dalam JSON.
+
+~~~php
+<?php
+
+use Illuminate\Support\Facades\Http;
+use MischaSigtermans\Toon\Facades\Toon;
+
+$orders = Order::query()
+    ->select(['id', 'customer_name', 'status', 'grand_total', 'created_at'])
+    ->latest()
+    ->limit(100)
+    ->get()
+    ->toArray();
+
+$contextToon = Toon::encode([
+    'orders' => $orders,
+]);
+
+$prompt = <<<PROMPT
+Anda menerima data pesanan dalam format TOON.
+
+```toon
+{$contextToon}
+```
+
+Tugas:
+1. Ringkas status pesanan.
+2. Sorot order yang butuh perhatian.
+3. Kembalikan hasil akhir dalam JSON dengan shape:
+{
+  "summary": "string",
+  "attention_order_ids": [number]
+}
+PROMPT;
+
+$response = Http::withToken(env('OPENAI_API_KEY'))
+    ->post('https://api.openai.com/v1/responses', [
+        'model' => 'gpt-5-mini',
+        'input' => $prompt,
+    ])
+    ->json();
+~~~
+
+Kenapa pola ini enak? Karena **input hemat token**, tapi **output tetap mudah divalidasi**.
+
+### 6) Tips kustomisasi di Laravel
+
+Kalau target Anda adalah efisiensi token, saya biasanya mulai dari urutan ini:
+
+1. buang field yang tidak penting dengan `omit_keys`,
+2. pendekkan nama key yang panjang dengan `key_aliases`,
+3. pakai delimiter tab untuk dataset yang benar-benar tabular,
+4. format tanggal dan angka supaya tidak terlalu verbose,
+5. ukur penghematannya lewat helper `Toon::diff()` sebelum dipakai ke production.
+
+Kalau Anda ingin expose hasil TOON lewat HTTP, dokumentasi resmi TOON menyebut media type provisional yang dipakai adalah **`text/toon`** dengan UTF-8. [1]
+
+## Cara konfigurasi dan kustomisasi TOON di Next.js
+
+Kalau stack Anda Next.js, enaknya ada library TypeScript/JavaScript resmi: `@toon-format/toon`. [4]
+
+### 1) Instalasi
+
+```bash
+npm install @toon-format/toon
+```
+
+### 2) Encode dan decode dasar
+
+```ts
+import { encode, decode } from '@toon-format/toon'
+
+const data = {
+  products: [
+    { id: 1, sku: 'KB-001', name: 'Keyboard', stock: 12, price: 350000 },
+    { id: 2, sku: 'MS-002', name: 'Mouse', stock: 4, price: 180000 },
+    { id: 3, sku: 'MN-003', name: 'Monitor', stock: 2, price: 2200000 },
+  ],
+}
+
+const toon = encode(data)
+const restored = decode(toon, { strict: true })
+```
+
+### 3) Opsi yang paling menarik untuk dikustomisasi
+
+Dokumentasi API resmi TOON untuk JavaScript menyediakan opsi seperti:
+
+- `delimiter` → `','`, `"\t"`, atau `'|'`,
+- `keyFolding: 'safe'` → melipat wrapper key tunggal menjadi dotted path,
+- `flattenDepth` → membatasi seberapa dalam folding dilakukan,
+- `strict: true` saat decode → validasi array count, indentasi, dan konsistensi delimiter,
+- `expandPaths: 'safe'` → membalik dotted path menjadi nested object lagi.
+
+Contoh yang menurut saya cukup realistis:
+
+```ts
+import { encode, decode } from '@toon-format/toon'
+
+const source = {
+  analytics: {
+    daily: {
+      items: [
+        { date: '2026-03-01', views: 1200, clicks: 84, sales: 9 },
+        { date: '2026-03-02', views: 980, clicks: 76, sales: 7 },
+      ],
+    },
+  },
+}
+
+const toon = encode(source, {
+  delimiter: '\t',
+  keyFolding: 'safe',
+  flattenDepth: 2,
+})
+
+const parsed = decode(toon, {
+  strict: true,
+  expandPaths: 'safe',
+})
+```
+
+Kalau dataset Anda tabular dan besar, delimiter tab sering jadi pilihan menarik karena dokumentasi resmi TOON menyebut tab sering tokenize lebih efisien daripada koma dan lebih jarang bentrok dengan teks natural. [4]
+
+### 4) Contoh route handler Next.js untuk kirim context TOON ke LLM
+
+```ts
+import { encode } from '@toon-format/toon'
+import { NextResponse } from 'next/server'
+
+export async function POST() {
+  const products = [
+    { id: 1, sku: 'KB-001', name: 'Keyboard', stock: 12, price: 350000 },
+    { id: 2, sku: 'MS-002', name: 'Mouse', stock: 4, price: 180000 },
+    { id: 3, sku: 'MN-003', name: 'Monitor', stock: 2, price: 2200000 },
+  ]
+
+  const contextToon = encode(
+    { products },
+    {
+      delimiter: '\t',
+      keyFolding: 'safe',
+      flattenDepth: 2,
+    },
+  )
+
+  const prompt = `
+Data berikut menggunakan format TOON.
+
+\`\`\`toon
+${contextToon}
+\`\`\`
+
+Tugas:
+- Buat ringkasan inventory.
+- Sorot produk low-stock.
+- Kembalikan jawaban akhir dalam JSON.
+`
+
+  return NextResponse.json({
+    prompt,
+    note: 'Gunakan TOON sebagai input context, dan JSON sebagai output final.',
+  })
+}
+```
+
+### 5) Contoh route handler Next.js yang mengembalikan TOON
+
+Kalau Anda memang mau expose endpoint TOON untuk internal tooling atau eksperimen LLM, bisa juga seperti ini:
+
+```ts
+import { encode } from '@toon-format/toon'
+
+export async function GET() {
+  const data = {
+    products: [
+      { id: 1, sku: 'KB-001', name: 'Keyboard', stock: 12 },
+      { id: 2, sku: 'MS-002', name: 'Mouse', stock: 4 },
+    ],
+  }
+
+  const body = encode(data, { delimiter: '\t' })
+
+  return new Response(body, {
+    headers: {
+      'Content-Type': 'text/toon; charset=utf-8',
+    },
+  })
+}
+```
+
+## Best practice yang menurut saya paling masuk akal
+
+Setelah membaca dokumentasi resminya, melihat benchmark, dan mempertimbangkan workflow aplikasi nyata, saya pribadi akan merekomendasikan strategi berikut.
+
+### 1) JSON tetap jadi source of truth
+
+Database layer, API internal, cache, job queue, dan kontrak antar layanan tetap lebih sehat kalau basisnya JSON/object biasa.
+
+### 2) TOON dipakai di boundary menuju LLM
+
+Begitu data mau dilempar ke prompt, baru encode menjadi TOON. Ini persis sejalan dengan positioning TOON sebagai translation layer untuk LLM input.
+
+### 3) Output akhir tetap JSON kalau mau diproses backend
+
+Untuk tool calling, structured outputs, atau response yang akan di-parse aplikasi, JSON tetap pilihan yang lebih aman.
+
+### 4) Selalu benchmark terhadap JSON compact, bukan cuma JSON pretty
+
+Ini penting banget. Banyak orang melihat klaim “TOON lebih hemat token” lalu membandingkannya dengan JSON yang indented rapi. Padahal dalam production, kita sering kirim JSON yang sudah compact. Jadi pembanding yang adil adalah **TOON vs JSON compact** pada dataset Anda sendiri.
+
+### 5) Validasi output secara ketat
+
+Kalau Anda menerima TOON dari model, aktifkan mode `strict` ketika decode. Dokumentasi TOON memang menyarankan validasi ketat untuk mendeteksi mismatch jumlah row, delimiter, atau struktur yang rusak. [2][4]
+
+### 6) Tunjukkan contoh, jangan jelaskan sintaks terlalu panjang
+
+Dokumentasi resmi TOON juga memberi tips yang menurut saya tepat: **show, don’t describe**. Model biasanya lebih cepat paham pola TOON kalau Anda beri contoh kecil 2–5 row, dibanding menjelaskan semua aturan format dalam paragraf panjang. [2]
+
+## Jadi, saya pilih TOON atau JSON?
+
+Kalau pertanyaannya dibuat sangat praktis, jawaban saya begini:
+
+- **Untuk input ke LLM:** saya akan serius mempertimbangkan TOON, terutama kalau datanya tabular dan besar.
+- **Untuk output dari LLM yang harus diproses sistem:** saya tetap pilih JSON.
+- **Untuk arsitektur aplikasi secara keseluruhan:** saya pakai pendekatan hybrid — JSON di dalam sistem, TOON di pintu masuk ke model.
+
+Menurut saya itu posisi yang paling realistis hari ini. Tidak terlalu fanboy ke format baru, tapi juga tidak menutup mata bahwa TOON memang menawarkan efisiensi yang nyata di use case yang tepat.
+
+Kalau Anda sedang bangun fitur AI di Laravel atau Next.js, pendekatan ini enak karena tetap menjaga sistem rapi, tapi context ke model juga tidak boros-boros amat.
+
+## Penutup
+
+Buat saya, TOON itu menarik bukan karena dia ingin menggulingkan JSON, tapi karena dia memberi kita opsi baru yang lebih pas untuk dunia LLM.
+
+JSON tetap juara untuk interoperabilitas. Tapi untuk prompt engineering yang serius, terutama saat context mulai gemuk, TOON layak dicoba.
+
+Kalau mau versi paling simpel dari artikel ini, saya akan rangkum seperti ini:
+
+> **TOON bagus untuk membuat input LLM lebih ringkas. JSON tetap terbaik untuk output yang harus tervalidasi dan terintegrasi rapi dengan aplikasi.**
+
+Dan jujur, kombinasi dua-duanya justru sering jadi solusi paling waras.
+
+## Referensi
+
+1. TOON Documentation — Getting Started: https://toonformat.dev/guide/getting-started  
+2. TOON Documentation — Using TOON with LLMs: https://toonformat.dev/guide/llm-prompts  
+3. TOON Documentation — Benchmarks: https://toonformat.dev/guide/benchmarks  
+4. TOON Documentation — API Reference: https://toonformat.dev/reference/api  
+5. TOON Documentation — Implementations: https://toonformat.dev/ecosystem/implementations  
+6. `mischasigtermans/laravel-toon` README: https://github.com/mischasigtermans/laravel-toon  
+7. OpenAI — Structured model outputs: https://developers.openai.com/api/docs/guides/structured-outputs  
+8. OpenAI API Reference — `response_format` JSON Schema / JSON object: https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create  
+9. Google Gemini API — Structured outputs: https://ai.google.dev/gemini-api/docs/structured-output  
+10. Masciari et al. — *Are LLMs Ready for TOON? Benchmarking Structural Correctness–Sustainability Trade-offs in Novel Structured Output Formats* (preprint): https://arxiv.org/pdf/2601.12014

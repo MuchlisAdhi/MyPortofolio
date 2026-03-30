@@ -1,7 +1,30 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { useTheme } from "next-themes";
+
+type ThemeMode = "light" | "dark";
+
+function subscribeTheme(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("themechange", callback);
+
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("themechange", callback);
+  };
+}
+
+function getThemeSnapshot(): ThemeMode {
+  if (typeof document === "undefined") {
+    return "light";
+  }
+
+  return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function getServerThemeSnapshot(): ThemeMode {
+  return "light";
+}
 
 function useMounted() {
   return useSyncExternalStore(
@@ -12,15 +35,28 @@ function useMounted() {
 }
 
 export function ThemeToggle() {
-  const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
-  const isDark = mounted && resolvedTheme === "dark";
+  const theme = useSyncExternalStore(subscribeTheme, getThemeSnapshot, getServerThemeSnapshot);
+  const isDark = mounted && theme === "dark";
+
+  const toggleTheme = () => {
+    const nextTheme: ThemeMode = isDark ? "light" : "dark";
+
+    if (nextTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", nextTheme);
+    window.dispatchEvent(new Event("themechange"));
+  };
 
   return (
     <button
       type="button"
       aria-label="Toggle color theme"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={toggleTheme}
       className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/5 bg-white text-[#5b5b5b] shadow-sm transition hover:bg-[#f5f5f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#6b6b6b] focus-visible:ring-offset-2 dark:border-white/10 dark:bg-[#1e2127] dark:text-slate-100 dark:hover:bg-[#262a33] dark:focus-visible:ring-offset-[#151820]"
     >
       {!mounted ? <NeutralIcon /> : isDark ? <SunIcon /> : <MoonIcon />}
