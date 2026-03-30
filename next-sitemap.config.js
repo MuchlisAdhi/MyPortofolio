@@ -11,6 +11,8 @@ const config = {
     "/500",
     "/robots.txt",
     "/manifest.webmanifest",
+    "/blog/opengraph-image",
+    "/blog/*/opengraph-image",
   ],
   transform: async (ctx, path) => {
     return {

@@ -3,6 +3,9 @@ DirectoryIndex index.html
 
 <IfModule mod_mime.c>
   AddType application/manifest+json .webmanifest
+  <FilesMatch "opengraph-image$">
+    ForceType image/png
+  </FilesMatch>
 </IfModule>
 
 <IfModule mod_headers.c>
@@ -31,6 +34,10 @@ DirectoryIndex index.html
   RewriteCond %{HTTPS} !=on [OR]
   RewriteCond %{HTTP_HOST} ^www\.muchlisadhi\.my\.id$ [NC]
   RewriteRule ^(.*)$ https://muchlisadhi.my.id/$1 [R=301,L]
+
+  # If a matching .html file exists, serve it before directory autoindex.
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+?)/?$ $1.html [L]
 
   # Serve file/folder as-is when it exists.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
