@@ -1,0 +1,16 @@
+{
+  "metaTitle": "Blog | Muchlis Adhi Wiratama",
+  "metaDescription": "Artikel lan cathetan teknis Muchlis Adhi Wiratama babagan backend development, sistem bisnis, lan pangembangan aplikasi web.",
+  "schemaBlogName": "Blog Muchlis Adhi Wiratama",
+  "schemaBlogDescription": "Artikel lan cathetan teknis Muchlis Adhi Wiratama babagan backend development, sistem bisnis, lan pangembangan aplikasi web.",
+  "headerBadge": "Cathetan lan Insight",
+  "headerTitle": "Blog Muchlis Adhi Wiratama",
+  "headerDescription": "Kumpulan artikel babagan pengalaman development, backend engineering, lan prakara teknis sing daktemoni nalika mbangun sistem web.",
+  "home": "Ngarep",
+  "readArticle": "Waca Artikel",
+  "minutesRead": "{{count}} menit maca",
+  "notFoundTitle": "Artikel ora ditemokake | Muchlis Adhi Wiratama",
+  "breadcrumbsHome": "Ngarep",
+  "breadcrumbsBlog": "Blog",
+  "notesAndInsights": "Cathetan lan Insight"
+}

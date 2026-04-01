@@ -71,20 +71,20 @@ export default function Home() {
           <a
             href="/cv.pdf"
             download
-            className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#f3c845] px-3 text-[15px] font-semibold text-[#2f2f2f] transition hover:bg-[#e9bc36] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 sm:h-12 sm:px-6 sm:text-[18px] dark:bg-[#f3c845] dark:text-[#222]"
+            className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-[#f3c845] px-2 text-center text-[12px] font-semibold leading-none tracking-tight text-[#2f2f2f] transition hover:bg-[#e9bc36] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 min-[375px]:px-3 min-[375px]:text-[13px] sm:h-12 sm:px-6 sm:text-[18px] dark:bg-[#f3c845] dark:text-[#222]"
           >
             Download CV
           </a>
           <a
             href="#contact"
-            className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#ebebeb] px-3 text-[15px] font-semibold text-[#2f2f2f] transition hover:bg-[#e2e2e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 sm:h-12 sm:px-6 sm:text-[18px] dark:bg-[#2a303d] dark:text-slate-100 dark:hover:bg-[#333a49]"
+            className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-[#ebebeb] px-2 text-center text-[12px] font-semibold leading-none tracking-tight text-[#2f2f2f] transition hover:bg-[#e2e2e2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 min-[375px]:px-3 min-[375px]:text-[13px] sm:h-12 sm:px-6 sm:text-[18px] dark:bg-[#2a303d] dark:text-slate-100 dark:hover:bg-[#333a49]"
           >
-            Contact me
+            Contact Me
           </a>
           <Link
             href="/blog"
             prefetch={false}
-            className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#1d4f91] px-3 text-[15px] font-semibold text-white transition hover:bg-[#173f73] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 sm:h-12 sm:px-6 sm:text-[18px] dark:bg-sky-500 dark:text-[#1a1f29] dark:hover:bg-sky-400"
+            className="inline-flex h-11 w-full items-center justify-center whitespace-nowrap rounded-xl bg-[#1d4f91] px-2 text-center text-[12px] font-semibold leading-none tracking-tight text-white transition hover:bg-[#173f73] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7a7a7a] focus-visible:ring-offset-2 min-[375px]:px-3 min-[375px]:text-[13px] sm:h-12 sm:px-6 sm:text-[18px] dark:bg-sky-500 dark:text-[#1a1f29] dark:hover:bg-sky-400"
           >
             Blog
           </Link>

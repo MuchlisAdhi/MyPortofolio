@@ -35,6 +35,10 @@ DirectoryIndex index.html
   RewriteCond %{HTTP_HOST} ^www\.muchlisadhi\.my\.id$ [NC]
   RewriteRule ^(.*)$ https://muchlisadhi.my.id/$1 [R=301,L]
 
+  # Normalize accidental trailing slash on static files (e.g. /sitemap.xml/).
+  RewriteCond %{REQUEST_URI} ^/(.+\.[a-zA-Z0-9]{1,8})/$
+  RewriteRule ^ %1 [R=301,L]
+
   # If a matching .html file exists, serve it before directory autoindex.
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
   RewriteRule ^(.+?)/?$ $1.html [L]

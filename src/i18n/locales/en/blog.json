@@ -1,0 +1,16 @@
+{
+  "metaTitle": "Blog | Muchlis Adhi Wiratama",
+  "metaDescription": "Articles and technical notes by Muchlis Adhi Wiratama on backend development, business systems, and web application engineering.",
+  "schemaBlogName": "Muchlis Adhi Wiratama Blog",
+  "schemaBlogDescription": "Articles and technical notes by Muchlis Adhi Wiratama on backend development, business systems, and web application engineering.",
+  "headerBadge": "Notes and Insights",
+  "headerTitle": "Muchlis Adhi Wiratama Blog",
+  "headerDescription": "A collection of articles about development experiences, backend engineering, and practical technical topics from real web projects.",
+  "home": "Home",
+  "readArticle": "Read Article",
+  "minutesRead": "{{count}} min read",
+  "notFoundTitle": "Article not found | Muchlis Adhi Wiratama",
+  "breadcrumbsHome": "Home",
+  "breadcrumbsBlog": "Blog",
+  "notesAndInsights": "Notes and Insights"
+}

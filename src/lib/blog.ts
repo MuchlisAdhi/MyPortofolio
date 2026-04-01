@@ -8,6 +8,8 @@ const BLOG_DIRECTORY = path.join(process.cwd(), "content", "blog");
 const FALLBACK_IMAGE = "/og/og-image-dark-muchlisadhi.png";
 const DEFAULT_AUTHOR = "Muchlis Adhi Wiratama";
 
+type BlogLocale = "id" | "en" | "jv";
+
 interface BlogSeoConfig {
   title?: string;
   description?: string;
@@ -44,6 +46,28 @@ export interface BlogPostSummary {
 
 export interface BlogPost extends BlogPostSummary {
   content: string;
+}
+
+function normalizeBlogLocale(locale?: string): BlogLocale {
+  if (locale === "en") {
+    return "en";
+  }
+
+  if (locale === "jv") {
+    return "jv";
+  }
+
+  return "id";
+}
+
+function getBlogDirectoryCandidates(locale: BlogLocale): string[] {
+  const localizedDirectory = path.join(BLOG_DIRECTORY, locale);
+
+  if (locale === "id") {
+    return [localizedDirectory, BLOG_DIRECTORY];
+  }
+
+  return [localizedDirectory, path.join(BLOG_DIRECTORY, "id"), BLOG_DIRECTORY];
 }
 
 function asStringArray(value: unknown): string[] {
@@ -129,9 +153,12 @@ function toAbsoluteUrl(urlOrPath: string): string {
     : `${SITE_URL}${urlOrPath}`;
 }
 
-function parseBlogFile(fileName: string): BlogPost {
-  const slug = fileName.replace(/\.mdx$/i, "");
-  const filePath = path.join(BLOG_DIRECTORY, fileName);
+function getCanonicalPath(locale: BlogLocale, slug: string): string {
+  return locale === "id" ? `/blog/${slug}` : `/${locale}/blog/${slug}`;
+}
+
+function parseBlogFile(filePath: string, locale: BlogLocale): BlogPost {
+  const slug = path.basename(filePath).replace(/\.mdx$/i, "");
   const fileContent = fs.readFileSync(filePath, "utf8");
   const { data, content } = matter(fileContent);
   const frontmatter = data as BlogFrontmatter;
@@ -165,9 +192,11 @@ function parseBlogFile(fileName: string): BlogPost {
       : "") ||
     "Artikel blog Muchlis Adhi Wiratama.";
   const tags = asStringArray(frontmatter.tags);
-  const keywords = Array.from(new Set([...asStringArray(frontmatter.keywords), ...tags]));
+  const keywords = Array.from(
+    new Set([...asStringArray(frontmatter.keywords), ...tags]),
+  );
   const image = resolveImagePath(frontmatter.image);
-  const canonical = `${SITE_URL}/blog/${slug}`;
+  const canonical = `${SITE_URL}${getCanonicalPath(locale, slug)}`;
 
   return {
     slug,
@@ -189,23 +218,39 @@ function parseBlogFile(fileName: string): BlogPost {
   };
 }
 
-const getAllBlogPostsInternal = cache((): BlogPost[] => {
-  if (!fs.existsSync(BLOG_DIRECTORY)) {
-    return [];
+const getAllBlogPostsInternal = cache((locale: BlogLocale): BlogPost[] => {
+  const filesBySlug = new Map<string, string>();
+
+  for (const directory of getBlogDirectoryCandidates(locale)) {
+    if (!fs.existsSync(directory) || !fs.statSync(directory).isDirectory()) {
+      continue;
+    }
+
+    const fileNames = fs
+      .readdirSync(directory)
+      .filter((fileName) => fileName.endsWith(".mdx"));
+
+    for (const fileName of fileNames) {
+      const slug = fileName.replace(/\.mdx$/i, "");
+
+      if (!filesBySlug.has(slug)) {
+        filesBySlug.set(slug, path.join(directory, fileName));
+      }
+    }
   }
 
-  return fs
-    .readdirSync(BLOG_DIRECTORY)
-    .filter((fileName) => fileName.endsWith(".mdx"))
-    .map(parseBlogFile)
+  return Array.from(filesBySlug.values())
+    .map((filePath) => parseBlogFile(filePath, locale))
     .sort(
       (left, right) =>
         new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime(),
     );
 });
 
-export const getAllBlogPosts = cache((): BlogPostSummary[] =>
-  getAllBlogPostsInternal().map((post) => ({
+export const getAllBlogPosts = cache((locale: BlogLocale = "id"): BlogPostSummary[] => {
+  const normalizedLocale = normalizeBlogLocale(locale);
+
+  return getAllBlogPostsInternal(normalizedLocale).map((post) => ({
     slug: post.slug,
     title: post.title,
     description: post.description,
@@ -218,21 +263,27 @@ export const getAllBlogPosts = cache((): BlogPostSummary[] =>
     image: post.image,
     canonical: post.canonical,
     readingTimeMinutes: post.readingTimeMinutes,
-  })),
-);
-
-export const getBlogPostBySlug = cache((slug: string): BlogPost | null => {
-  const match = getAllBlogPostsInternal().find((post) => post.slug === slug);
-  return match ?? null;
+  }));
 });
 
-export function formatBlogDate(dateInput: string): string {
+export const getBlogPostBySlug = cache(
+  (slug: string, locale: BlogLocale = "id"): BlogPost | null => {
+    const normalizedLocale = normalizeBlogLocale(locale);
+    const match = getAllBlogPostsInternal(normalizedLocale).find(
+      (post) => post.slug === slug,
+    );
+
+    return match ?? null;
+  },
+);
+
+export function formatBlogDate(dateInput: string, locale: string = "id-ID"): string {
   const parsed = new Date(dateInput);
   if (Number.isNaN(parsed.getTime())) {
     return dateInput;
   }
 
-  return new Intl.DateTimeFormat("id-ID", {
+  return new Intl.DateTimeFormat(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric",
