@@ -8,7 +8,15 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/blog/opengraph-image", "/blog/*/opengraph-image"],
+        allow: [
+          "/",
+          "/blog/opengraph-image",
+          "/blog/*/opengraph-image",
+          "/en/blog/opengraph-image",
+          "/en/blog/*/opengraph-image",
+          "/jv/blog/opengraph-image",
+          "/jv/blog/*/opengraph-image",
+        ],
       },
     ],
     host: SITE_URL,

@@ -29,6 +29,7 @@ interface BlogPostViewProps {
 export async function getBlogIndexMetadata(locale: BlogLocale): Promise<Metadata> {
   const { t } = await getBlogTranslator(locale);
   const listingPath = getBlogListingPath(locale);
+  const listingOgImagePath = `${listingPath}/opengraph-image`;
 
   return {
     title: t("metaTitle"),
@@ -49,7 +50,7 @@ export async function getBlogIndexMetadata(locale: BlogLocale): Promise<Metadata
       siteName: "Muchlis Adhi Wiratama",
       images: [
         {
-          url: "/blog/opengraph-image",
+          url: listingOgImagePath,
           width: 1200,
           height: 630,
           alt: t("schemaBlogName"),
@@ -60,7 +61,7 @@ export async function getBlogIndexMetadata(locale: BlogLocale): Promise<Metadata
       card: "summary_large_image",
       title: t("metaTitle"),
       description: t("metaDescription"),
-      images: ["/blog/opengraph-image"],
+      images: [listingOgImagePath],
     },
   };
 }
@@ -77,7 +78,8 @@ export async function getBlogPostMetadata(locale: BlogLocale, slug: string): Pro
   }
 
   const localizedPostPath = getBlogPostPath(locale, post.slug);
-  const ogImageUrl = `${SITE_URL}/blog/${post.slug}/opengraph-image`;
+  const ogImagePath = `${localizedPostPath}/opengraph-image`;
+  const ogImageUrl = `${SITE_URL}${ogImagePath}`;
 
   return {
     title: `${post.title} | ${t("schemaBlogName")}`,
@@ -231,6 +233,7 @@ export async function BlogPostView({ locale, slug }: BlogPostViewProps) {
 
   const listingPath = getBlogListingPath(locale);
   const localizedPostPath = getBlogPostPath(locale, post.slug);
+  const ogImagePath = `${localizedPostPath}/opengraph-image`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -243,7 +246,7 @@ export async function BlogPostView({ locale, slug }: BlogPostViewProps) {
     articleSection: post.tags,
     mainEntityOfPage: `${SITE_URL}${localizedPostPath}`,
     url: `${SITE_URL}${localizedPostPath}`,
-    image: `${SITE_URL}/blog/${post.slug}/opengraph-image`,
+    image: `${SITE_URL}${ogImagePath}`,
     author: {
       "@type": "Person",
       name: post.author,

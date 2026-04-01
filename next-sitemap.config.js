@@ -13,6 +13,10 @@ const config = {
     "/manifest.webmanifest",
     "/blog/opengraph-image",
     "/blog/*/opengraph-image",
+    "/en/blog/opengraph-image",
+    "/en/blog/*/opengraph-image",
+    "/jv/blog/opengraph-image",
+    "/jv/blog/*/opengraph-image",
   ],
   transform: async (ctx, path) => {
     return {
